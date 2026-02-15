@@ -5,6 +5,7 @@ import '../../config/theme.dart';
 import '../../models/product.dart';
 import '../../providers/product_provider.dart';
 import '../../providers/cart_provider.dart';
+import '../widgets/smart_image.dart';
 
 class ProductDetailScreen extends ConsumerStatefulWidget {
   final String productId;
@@ -404,8 +405,8 @@ class _ProductImageSection extends StatelessWidget {
           // Main image
           Center(
             child: product.primaryImageUrl.isNotEmpty
-                ? Image.network(
-                    product.primaryImageUrl,
+                ? SmartImage(
+                    imageUrl: product.primaryImageUrl,
                     fit: BoxFit.contain,
                     height: 220,
                   )
@@ -488,10 +489,10 @@ class _ProductImageSection extends StatelessWidget {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
-                        child: Image.network(
-                          product.images[index].imageUrl,
+                        child: SmartImage(
+                          imageUrl: product.images[index].imageUrl,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => const Icon(
+                          errorWidget: const Icon(
                             Icons.image,
                             size: 24,
                             color: AppColors.textLight,

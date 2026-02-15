@@ -7,6 +7,7 @@ import '../../models/product.dart';
 import '../widgets/product_card.dart';
 import '../widgets/section_header.dart';
 import '../widgets/search_bar_widget.dart';
+import '../widgets/smart_image.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -363,12 +364,12 @@ class _PromoBanner extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
                 child: product.primaryImageUrl.isNotEmpty
-                    ? Image.network(
-                        product.primaryImageUrl,
+                    ? SmartImage(
+                        imageUrl: product.primaryImageUrl,
                         width: 140,
                         height: 140,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
+                        errorWidget: Container(
                           width: 140,
                           height: 140,
                           color: Colors.white24,
@@ -472,11 +473,11 @@ class _CategoryTile extends StatelessWidget {
               child: category.iconUrl != null && category.iconUrl!.isNotEmpty
                   ? ClipRRect(
                       borderRadius: BorderRadius.circular(14),
-                      child: Image.network(
-                        category.iconUrl!,
+                      child: SmartImage(
+                        imageUrl: category.iconUrl!,
                         width: 30,
                         height: 30,
-                        errorBuilder: (_, __, ___) => Icon(
+                        errorWidget: Icon(
                           _getCategoryIcon(category.name),
                           size: 26,
                           color: AppColors.primary,

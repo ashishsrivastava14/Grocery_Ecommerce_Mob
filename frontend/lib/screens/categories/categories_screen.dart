@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../config/theme.dart';
 import '../../models/product.dart';
 import '../../providers/product_provider.dart';
+import '../widgets/smart_image.dart';
 
 class CategoriesScreen extends ConsumerWidget {
   const CategoriesScreen({super.key});
@@ -119,10 +120,10 @@ class _CategoryCard extends StatelessWidget {
                     top: Radius.circular(20),
                   ),
                   child: category.imageUrl != null && category.imageUrl!.isNotEmpty
-                      ? Image.network(
-                          category.imageUrl!,
+                      ? SmartImage(
+                          imageUrl: category.imageUrl!,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Center(
+                          errorWidget: Center(
                             child: Icon(
                               _getCategoryIcon(category.name),
                               size: 48,

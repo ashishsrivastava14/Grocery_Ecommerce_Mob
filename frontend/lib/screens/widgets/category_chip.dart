@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../config/theme.dart';
 import '../../models/product.dart';
+import 'smart_image.dart';
 
 class CategoryChip extends StatelessWidget {
   final ProductCategory category;
@@ -42,11 +43,11 @@ class CategoryChip extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (category.iconUrl != null && category.iconUrl!.isNotEmpty) ...[
-              Image.network(
-                category.iconUrl!,
+              SmartImage(
+                imageUrl: category.iconUrl!,
                 width: 20,
                 height: 20,
-                errorBuilder: (_, __, ___) => Icon(
+                errorWidget: Icon(
                   _getCategoryIcon(category.name),
                   size: 18,
                   color: isSelected ? Colors.white : AppColors.textSecondary,

@@ -84,5 +84,8 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/images/categories/
+    - assets/images/products/
+    - assets/images/category_icons/
     - assets/icons/
     - assets/lottie/

@@ -6,6 +6,7 @@ import '../../models/cart.dart';
 import '../../providers/cart_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../widgets/login_prompt.dart';
+import '../widgets/smart_image.dart';
 
 class CartScreen extends ConsumerWidget {
   const CartScreen({super.key});
@@ -265,10 +266,10 @@ class _CartItemCard extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(14),
                 child: item.product.primaryImageUrl.isNotEmpty
-                    ? Image.network(
-                        item.product.primaryImageUrl,
+                    ? SmartImage(
+                        imageUrl: item.product.primaryImageUrl,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => const Icon(
+                        errorWidget: const Icon(
                           Icons.image,
                           color: AppColors.textLight,
                         ),

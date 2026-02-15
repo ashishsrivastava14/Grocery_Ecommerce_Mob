@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../config/theme.dart';
 import '../../models/product.dart';
+import 'smart_image.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -47,10 +48,10 @@ class ProductCard extends StatelessWidget {
                               borderRadius: const BorderRadius.vertical(
                                 top: Radius.circular(20),
                               ),
-                              child: Image.network(
-                                product.primaryImageUrl,
+                              child: SmartImage(
+                                imageUrl: product.primaryImageUrl,
                                 fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => const Icon(
+                                errorWidget: const Icon(
                                   Icons.image,
                                   size: 48,
                                   color: AppColors.textLight,

@@ -8,9 +8,15 @@ from app.models.product import ProductCategory, Product, ProductImage, ProductSt
 from app.models.vendor import Vendor, VendorStatus
 from app.models.user import User, UserRole
 import bcrypt
+import re
 
 def hash_password(password: str) -> str:
     return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+
+def _product_slug(name: str) -> str:
+    """Convert product name to its local image asset slug."""
+    s = name.lower().replace(" ", "-").replace("(", "").replace(")", "").replace("&", "and")
+    return re.sub(r'-+', '-', s).strip('-')
 
 # ─── High-quality Unsplash/Pexels image URLs for categories ───
 CATEGORIES = [
@@ -480,8 +486,8 @@ async def seed():
                 name=cat_data["name"],
                 slug=cat_data["slug"],
                 description=cat_data["description"],
-                icon_url=cat_data["icon_url"],
-                image_url=cat_data["image_url"],
+                icon_url=f"assets/images/category_icons/{cat_data['slug']}.png",
+                image_url=f"assets/images/categories/{cat_data['slug']}.jpg",
                 sort_order=cat_data["sort_order"],
                 is_active=True,
             )
@@ -534,11 +540,12 @@ async def seed():
                 )
                 session.add(product)
 
-                # Add product image
+                # Add product image (use local asset path)
+                img_slug = _product_slug(p["name"])
                 image = ProductImage(
                     id=uuid.uuid4(),
                     product_id=product_id,
-                    image_url=p["image"],
+                    image_url=f"assets/images/products/{img_slug}.jpg",
                     alt_text=p["name"],
                     sort_order=0,
                     is_primary=True,
