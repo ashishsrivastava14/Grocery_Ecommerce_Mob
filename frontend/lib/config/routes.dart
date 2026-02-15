@@ -13,6 +13,7 @@ import '../screens/orders/order_detail_screen.dart';
 import '../screens/favorites/favorites_screen.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/search/search_screen.dart';
+import '../screens/categories/categories_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/onboarding',
@@ -62,6 +63,12 @@ final appRouter = GoRouter(
           ),
         ),
       ],
+    ),
+
+    // Categories
+    GoRoute(
+      path: '/categories',
+      builder: (context, state) => const CategoriesScreen(),
     ),
 
     // Product

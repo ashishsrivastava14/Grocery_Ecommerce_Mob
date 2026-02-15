@@ -38,11 +38,23 @@ final popularProductsProvider =
   return data.map((e) => Product.fromJson(e)).toList();
 });
 
+// Products by category
+final categoryProductsProvider =
+    FutureProvider.family<List<Product>, String>((ref, categoryId) async {
+  final api = ref.watch(apiServiceProvider);
+  final response = await api.get('/products', queryParams: {
+    'category_id': categoryId,
+    'page_size': 50,
+  });
+  final data = response.data['data'] as List;
+  return data.map((e) => Product.fromJson(e)).toList();
+});
+
 // Product detail
 final productDetailProvider =
     FutureProvider.family<Product, String>((ref, id) async {
   final api = ref.watch(apiServiceProvider);
-  final response = await api.get('/product/$id');
+  final response = await api.get('/products/$id');
   return Product.fromJson(response.data['data']);
 });
 

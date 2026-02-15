@@ -115,8 +115,13 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
   }
 
   Widget _buildProductGrid() {
-    // Use FutureProvider with category filter
-    final productsAsync = ref.watch(popularProductsProvider);
+    // Use category-specific provider when categoryId is provided
+    final AsyncValue<List<Product>> productsAsync;
+    if (widget.categoryId != null && widget.categoryId!.isNotEmpty) {
+      productsAsync = ref.watch(categoryProductsProvider(widget.categoryId!));
+    } else {
+      productsAsync = ref.watch(popularProductsProvider);
+    }
 
     return productsAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -129,7 +134,13 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
             const Text('Failed to load products'),
             const SizedBox(height: 12),
             ElevatedButton(
-              onPressed: () => ref.invalidate(popularProductsProvider),
+              onPressed: () {
+                if (widget.categoryId != null && widget.categoryId!.isNotEmpty) {
+                  ref.invalidate(categoryProductsProvider(widget.categoryId!));
+                } else {
+                  ref.invalidate(popularProductsProvider);
+                }
+              },
               child: const Text('Retry'),
             ),
           ],
