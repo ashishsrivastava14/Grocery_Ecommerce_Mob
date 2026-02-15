@@ -53,7 +53,7 @@ class HomeScreen extends ConsumerWidget {
                                     ),
                           ),
                           Text(
-                            'FreshMart Grocery',
+                            'FreshMart Grocery - QuickPrepAI',
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium
