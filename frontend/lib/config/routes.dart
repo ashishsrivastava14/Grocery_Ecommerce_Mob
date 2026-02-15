@@ -16,7 +16,7 @@ import '../screens/search/search_screen.dart';
 import '../screens/categories/categories_screen.dart';
 
 final appRouter = GoRouter(
-  initialLocation: '/onboarding',
+  initialLocation: '/home',
   routes: [
     // Onboarding
     GoRoute(
