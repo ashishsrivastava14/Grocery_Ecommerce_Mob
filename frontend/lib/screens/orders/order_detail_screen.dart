@@ -63,7 +63,7 @@ class OrderDetailScreen extends ConsumerWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(color: AppColors.shadow, blurRadius: 10),
               ],
             ),
@@ -87,7 +87,7 @@ class OrderDetailScreen extends ConsumerWidget {
                 const SizedBox(height: 8),
                 Text(
                   'Placed on ${_formatDateTime(order.createdAt)}',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 13,
                     color: AppColors.textSecondary,
                   ),
@@ -104,7 +104,7 @@ class OrderDetailScreen extends ConsumerWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(color: AppColors.shadow, blurRadius: 10),
               ],
             ),
@@ -143,7 +143,7 @@ class OrderDetailScreen extends ConsumerWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(color: AppColors.shadow, blurRadius: 10),
               ],
             ),
@@ -188,7 +188,7 @@ class OrderDetailScreen extends ConsumerWidget {
                                 ),
                                 Text(
                                   'Qty: ${item.quantity}',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 12,
                                     color: AppColors.textSecondary,
                                   ),
@@ -219,7 +219,7 @@ class OrderDetailScreen extends ConsumerWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(color: AppColors.shadow, blurRadius: 10),
               ],
             ),
@@ -259,7 +259,7 @@ class OrderDetailScreen extends ConsumerWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(color: AppColors.shadow, blurRadius: 10),
               ],
             ),
@@ -286,7 +286,7 @@ class OrderDetailScreen extends ConsumerWidget {
                     Expanded(
                       child: Text(
                         _formatAddress(order.deliveryAddress),
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 14,
                           color: AppColors.textSecondary,
                           height: 1.4,
@@ -457,7 +457,7 @@ class _TimelineItem extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       note!,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 12,
                         color: AppColors.textSecondary,
                       ),
@@ -466,7 +466,7 @@ class _TimelineItem extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     time,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 11,
                       color: AppColors.textLight,
                     ),

@@ -137,13 +137,13 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
       ),
       data: (products) {
         if (products.isEmpty) {
-          return Center(
+          return const Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.inventory_2_outlined,
                     size: 64, color: AppColors.textLight),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 Text(
                   'No products found',
                   style: TextStyle(

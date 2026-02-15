@@ -69,7 +69,7 @@ class ProfileScreen extends ConsumerWidget {
                   const SizedBox(height: 4),
                   Text(
                     user?.email ?? '',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 14,
                       color: AppColors.textSecondary,
                     ),
@@ -130,7 +130,7 @@ class ProfileScreen extends ConsumerWidget {
                       title: 'Wallet',
                       subtitle: 'Balance & transactions',
                       onTap: () {},
-                      trailing: Text(
+                      trailing: const Text(
                         '\$0.00',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
@@ -186,7 +186,7 @@ class ProfileScreen extends ConsumerWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
+                    boxShadow: const [
                       BoxShadow(color: AppColors.shadow, blurRadius: 8),
                     ],
                   ),
@@ -242,7 +242,7 @@ class ProfileScreen extends ConsumerWidget {
                 const SizedBox(height: 24),
 
                 // App version
-                Center(
+                const Center(
                   child: Text(
                     'Version 1.0.0',
                     style: TextStyle(
@@ -273,7 +273,7 @@ class _SectionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(color: AppColors.shadow, blurRadius: 8),
         ],
       ),
@@ -329,7 +329,7 @@ class _MenuTile extends StatelessWidget {
       ),
       subtitle: Text(
         subtitle,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 12,
           color: AppColors.textSecondary,
         ),

@@ -50,7 +50,7 @@ class OrderListScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.receipt_long_outlined,
+                  const Icon(Icons.receipt_long_outlined,
                       size: 80, color: AppColors.textLight),
                   const SizedBox(height: 16),
                   const Text(
@@ -62,7 +62,7 @@ class OrderListScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
+                  const Text(
                     'Place your first order!',
                     style: TextStyle(
                       fontSize: 14,
@@ -105,11 +105,11 @@ class _OrderCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: AppColors.shadow,
               blurRadius: 10,
-              offset: const Offset(0, 3),
+              offset: Offset(0, 3),
             ),
           ],
         ),
@@ -136,12 +136,12 @@ class _OrderCard extends StatelessWidget {
             // Date
             Row(
               children: [
-                Icon(Icons.calendar_today_outlined,
+                const Icon(Icons.calendar_today_outlined,
                     size: 14, color: AppColors.textLight),
                 const SizedBox(width: 6),
                 Text(
                   _formatDate(order.createdAt),
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 13,
                     color: AppColors.textSecondary,
                   ),
@@ -153,13 +153,13 @@ class _OrderCard extends StatelessWidget {
             // Items preview
             Row(
               children: [
-                Icon(Icons.shopping_bag_outlined,
+                const Icon(Icons.shopping_bag_outlined,
                     size: 14, color: AppColors.textLight),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
                     '${order.items.length} item${order.items.length > 1 ? 's' : ''}',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 13,
                       color: AppColors.textSecondary,
                     ),
@@ -174,7 +174,7 @@ class _OrderCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   'Total',
                   style: TextStyle(
                     fontSize: 14,

@@ -34,7 +34,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
             children: [
               const Icon(Icons.error_outline, size: 48, color: AppColors.error),
               const SizedBox(height: 12),
-              Text('Failed to load product',
+              const Text('Failed to load product',
                   style: TextStyle(color: AppColors.textSecondary)),
               const SizedBox(height: 12),
               ElevatedButton(
@@ -96,7 +96,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                               const SizedBox(height: 4),
                               Text(
                                 product.unitType,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 14,
                                   color: AppColors.textSecondary,
                                 ),
@@ -132,7 +132,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                         const SizedBox(width: 8),
                         Text(
                           '${product.avgRating.toStringAsFixed(1)} (${product.totalReviews} reviews)',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 13,
                             color: AppColors.textSecondary,
                           ),
@@ -163,7 +163,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                               padding: const EdgeInsets.only(bottom: 4),
                               child: Text(
                                 '/${product.unitType}',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 14,
                                   color: AppColors.textSecondary,
                                 ),
@@ -175,7 +175,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                                 padding: const EdgeInsets.only(bottom: 4),
                                 child: Text(
                                   '\$${product.compareAtPrice?.toStringAsFixed(2)}',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     color: AppColors.textLight,
                                     decoration: TextDecoration.lineThrough,
@@ -234,12 +234,12 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                         color: AppColors.surfaceGreen,
                         borderRadius: BorderRadius.circular(14),
                       ),
-                      child: Row(
+                      child: const Row(
                         children: [
                           Icon(Icons.local_shipping_outlined,
                               color: AppColors.success, size: 24),
-                          const SizedBox(width: 12),
-                          const Column(
+                          SizedBox(width: 12),
+                          Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
@@ -277,7 +277,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                     const SizedBox(height: 8),
                     Text(
                       product.description ?? '',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 14,
                         color: AppColors.textSecondary,
                         height: 1.6,
@@ -322,7 +322,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                                 const SizedBox(height: 2),
                                 Text(
                                   entry.key,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 11,
                                     color: AppColors.textSecondary,
                                   ),
@@ -428,7 +428,7 @@ class _ProductImageSection extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(14),
-                  boxShadow: [
+                  boxShadow: const [
                     BoxShadow(
                       color: AppColors.shadow,
                       blurRadius: 8,
@@ -450,7 +450,7 @@ class _ProductImageSection extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(14),
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
                     color: AppColors.shadow,
                     blurRadius: 8,

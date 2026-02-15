@@ -20,7 +20,7 @@ class CartScreen extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.shopping_cart_outlined,
+              const Icon(Icons.shopping_cart_outlined,
                   size: 80, color: AppColors.textLight),
               const SizedBox(height: 16),
               const Text(
@@ -32,7 +32,7 @@ class CartScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
+              const Text(
                 'Add some items to get started',
                 style: TextStyle(
                   fontSize: 14,
@@ -130,7 +130,7 @@ class CartScreen extends ConsumerWidget {
               children: [
                 _SummaryRow('Subtotal', '\$${cart.subtotal.toStringAsFixed(2)}'),
                 const SizedBox(height: 8),
-                _SummaryRow('Delivery Fee', '\$3.99'),
+                const _SummaryRow('Delivery Fee', '\$3.99'),
                 const SizedBox(height: 8),
                 const Divider(height: 20),
                 _SummaryRow(
@@ -236,11 +236,11 @@ class _CartItemCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: AppColors.shadow,
               blurRadius: 8,
-              offset: const Offset(0, 2),
+              offset: Offset(0, 2),
             ),
           ],
         ),
@@ -291,7 +291,7 @@ class _CartItemCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     item.product.unitType,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 12,
                       color: AppColors.textSecondary,
                     ),

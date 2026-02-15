@@ -78,7 +78,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             style: const TextStyle(fontSize: 14),
             decoration: InputDecoration(
               hintText: 'Search groceries...',
-              hintStyle: TextStyle(
+              hintStyle: const TextStyle(
                 fontSize: 14,
                 color: AppColors.textLight,
               ),
@@ -134,18 +134,18 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               return ListTile(
                 dense: true,
                 contentPadding: EdgeInsets.zero,
-                leading: Icon(Icons.history,
+                leading: const Icon(Icons.history,
                     color: AppColors.textLight, size: 20),
                 title: Text(
                   _recentSearches[index],
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     color: AppColors.textSecondary,
                   ),
                 ),
                 trailing: IconButton(
                   icon:
-                      Icon(Icons.close, size: 16, color: AppColors.textLight),
+                      const Icon(Icons.close, size: 16, color: AppColors.textLight),
                   onPressed: () {
                     setState(() => _recentSearches.removeAt(index));
                   },
@@ -188,7 +188,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   ),
                   child: Text(
                     term,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 13,
                       color: AppColors.textSecondary,
                     ),
@@ -229,7 +229,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.search_off_rounded,
+                const Icon(Icons.search_off_rounded,
                     size: 64, color: AppColors.textLight),
                 const SizedBox(height: 16),
                 Text(
@@ -241,7 +241,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Text(
+                const Text(
                   'Try a different search term',
                   style: TextStyle(
                     fontSize: 14,
@@ -260,7 +260,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
               child: Text(
                 '${products.length} result${products.length > 1 ? 's' : ''} found',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 13,
                   color: AppColors.textSecondary,
                 ),

@@ -50,7 +50,7 @@ class User(Base):
         back_populates="user", cascade="all, delete-orphan", lazy="selectin"
     )
     orders: Mapped[list["Order"]] = relationship(  # noqa: F821
-        back_populates="customer", lazy="selectin"
+        back_populates="customer", foreign_keys="[Order.customer_id]", lazy="selectin"
     )
     reviews: Mapped[list["Review"]] = relationship(  # noqa: F821
         back_populates="user", lazy="selectin"
