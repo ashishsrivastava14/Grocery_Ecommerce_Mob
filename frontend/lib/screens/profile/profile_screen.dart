@@ -11,6 +11,7 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authAsync = ref.watch(authStateProvider);
     final user = authAsync.valueOrNull;
+    final isGuest = user == null;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -68,7 +69,7 @@ class ProfileScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    user?.email ?? '',
+                    isGuest ? 'Sign in for the full experience' : (user?.email ?? ''),
                     style: const TextStyle(
                       fontSize: 14,
                       color: AppColors.textSecondary,
@@ -76,8 +77,39 @@ class ProfileScreen extends ConsumerWidget {
                   ),
 
                   const SizedBox(height: 16),
-                  OutlinedButton.icon(
-                    onPressed: () {},
+                  if (isGuest)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () => context.push('/login'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 28, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                          ),
+                          child: const Text('Sign In',
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                        ),
+                        const SizedBox(width: 12),
+                        OutlinedButton(
+                          onPressed: () => context.push('/register'),
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: AppColors.primary),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                          ),
+                          child: const Text('Create Account'),
+                        ),
+                      ],
+                    )
+                  else
+                    OutlinedButton.icon(
+                      onPressed: () {},
                     icon: const Icon(Icons.edit_outlined, size: 18),
                     label: const Text('Edit Profile'),
                     style: OutlinedButton.styleFrom(
@@ -96,7 +128,8 @@ class ProfileScreen extends ConsumerWidget {
             padding: const EdgeInsets.all(16),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                // Orders section
+                // Orders section (only for logged-in users)
+                if (!isGuest) ...[
                 _SectionCard(
                   children: [
                     _MenuTile(
@@ -154,6 +187,7 @@ class ProfileScreen extends ConsumerWidget {
                 ),
 
                 const SizedBox(height: 12),
+                ],
 
                 // Settings section
                 _SectionCard(
@@ -181,7 +215,8 @@ class ProfileScreen extends ConsumerWidget {
 
                 const SizedBox(height: 12),
 
-                // Logout
+                // Logout (only when logged in)
+                if (!isGuest)
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.white,

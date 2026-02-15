@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../../config/theme.dart';
 import '../../models/cart.dart';
 import '../../providers/cart_provider.dart';
+import '../../providers/auth_provider.dart';
+import '../widgets/login_prompt.dart';
 
 class CartScreen extends ConsumerWidget {
   const CartScreen({super.key});
@@ -178,6 +180,12 @@ class CartScreen extends ConsumerWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
+                      final user = ref.read(authStateProvider).valueOrNull;
+                      if (user == null) {
+                        showLoginPrompt(context,
+                            message: 'Please sign in to proceed with checkout and place your order.');
+                        return;
+                      }
                       // Navigate to checkout
                       context.push('/checkout');
                     },

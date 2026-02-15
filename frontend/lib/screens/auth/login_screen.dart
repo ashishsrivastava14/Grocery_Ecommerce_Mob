@@ -181,6 +181,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                 ],
               ),
+
+              const SizedBox(height: 20),
+
+              // Browse as guest
+              Center(
+                child: TextButton.icon(
+                  onPressed: () => context.go('/home'),
+                  icon: const Icon(Icons.storefront_outlined, size: 18),
+                  label: const Text(
+                    'Browse as Guest',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.textSecondary,
+                  ),
+                ),
+              ),
             ],
           ),
         ),

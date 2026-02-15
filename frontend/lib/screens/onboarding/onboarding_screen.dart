@@ -138,35 +138,53 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget _buildButton() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32),
-      child: SizedBox(
-        width: double.infinity,
-        height: 56,
-        child: ElevatedButton(
-          onPressed: () {
-            if (_currentPage < _pages.length - 1) {
-              _pageController.nextPage(
-                duration: const Duration(milliseconds: 350),
-                curve: Curves.easeInOut,
-              );
-            } else {
-              context.go('/login');
-            }
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+      child: Column(
+        children: [
+          SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: ElevatedButton(
+              onPressed: () {
+                if (_currentPage < _pages.length - 1) {
+                  _pageController.nextPage(
+                    duration: const Duration(milliseconds: 350),
+                    curve: Curves.easeInOut,
+                  );
+                } else {
+                  context.go('/home');
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+              child: Text(
+                _currentPage < _pages.length - 1 ? 'Next' : 'Start Shopping',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
             ),
           ),
-          child: Text(
-            _currentPage < _pages.length - 1 ? 'Next' : 'Get Started',
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
+          if (_currentPage == _pages.length - 1) ...[
+            const SizedBox(height: 14),
+            TextButton(
+              onPressed: () => context.go('/login'),
+              child: const Text(
+                'Already have an account? Sign In',
+                style: TextStyle(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                ),
+              ),
             ),
-          ),
-        ),
+          ],
+        ],
       ),
     );
   }
