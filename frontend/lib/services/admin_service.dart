@@ -59,6 +59,16 @@ class AdminService {
     await _api.put('/admin/vendors/$vendorId', data: data);
   }
 
+  Future<Map<String, dynamic>> createVendor(Map<String, dynamic> data) async {
+    final res = await _api.post('/admin/vendors', data: data);
+    return Map<String, dynamic>.from(res.data);
+  }
+
+  Future<void> deleteVendor(String vendorId, {bool hardDelete = false}) async {
+    await _api.delete('/admin/vendors/$vendorId',
+        queryParams: {'hard_delete': hardDelete});
+  }
+
   // ─── Orders ───────────────────────────────────────────────
   Future<Map<String, dynamic>> getOrders({
     int page = 1,
@@ -125,6 +135,20 @@ class AdminService {
     await _api.put('/admin/customers/$userId/toggle-active');
   }
 
+  Future<Map<String, dynamic>> createCustomer(Map<String, dynamic> data) async {
+    final res = await _api.post('/admin/customers', data: data);
+    return Map<String, dynamic>.from(res.data);
+  }
+
+  Future<void> updateCustomer(String userId, Map<String, dynamic> data) async {
+    await _api.put('/admin/customers/$userId', data: data);
+  }
+
+  Future<void> deleteCustomer(String userId, {bool anonymize = false}) async {
+    await _api
+        .delete('/admin/customers/$userId', queryParams: {'anonymize': anonymize});
+  }
+
   // ─── Products ─────────────────────────────────────────────
   Future<Map<String, dynamic>> getProducts({
     int page = 1,
@@ -155,6 +179,36 @@ class AdminService {
   Future<List<Map<String, dynamic>>> getCategories() async {
     final res = await _api.get('/admin/categories');
     return List<Map<String, dynamic>>.from(res.data['data']);
+  }
+
+  Future<Map<String, dynamic>> createCategory(Map<String, dynamic> data) async {
+    final res = await _api.post('/admin/categories', data: data);
+    return Map<String, dynamic>.from(res.data);
+  }
+
+  Future<void> updateCategory(
+      String categoryId, Map<String, dynamic> data) async {
+    await _api.put('/admin/categories/$categoryId', data: data);
+  }
+
+  Future<void> deleteCategory(String categoryId,
+      {String? moveProductsTo}) async {
+    final params = <String, dynamic>{};
+    if (moveProductsTo != null) params['move_products_to'] = moveProductsTo;
+    await _api.delete('/admin/categories/$categoryId', queryParams: params);
+  }
+
+  Future<Map<String, dynamic>> createProduct(Map<String, dynamic> data) async {
+    final res = await _api.post('/admin/products', data: data);
+    return Map<String, dynamic>.from(res.data);
+  }
+
+  Future<void> updateProduct(String productId, Map<String, dynamic> data) async {
+    await _api.put('/admin/products/$productId', data: data);
+  }
+
+  Future<void> deleteProduct(String productId) async {
+    await _api.delete('/admin/products/$productId');
   }
 
   // ─── Transactions ─────────────────────────────────────────

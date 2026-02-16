@@ -54,6 +54,7 @@ class AdminShell extends StatelessWidget {
     if (path.contains('/vendors')) return 'Vendors';
     if (path.contains('/orders')) return 'Orders';
     if (path.contains('/customers')) return 'Customers';
+    if (path.contains('/categories')) return 'Categories';
     if (path.contains('/products')) return 'Products';
     if (path.contains('/transactions')) return 'Transactions';
     if (path.contains('/payouts')) return 'Payouts';
@@ -153,12 +154,13 @@ class _AdminSidebar extends StatelessWidget {
     if (location.startsWith('/admin/vendors')) return 1;
     if (location.startsWith('/admin/orders')) return 2;
     if (location.startsWith('/admin/customers')) return 3;
-    if (location.startsWith('/admin/products')) return 4;
-    if (location.startsWith('/admin/transactions')) return 5;
-    if (location.startsWith('/admin/payouts')) return 6;
-    if (location.startsWith('/admin/coupons')) return 7;
-    if (location.startsWith('/admin/reviews')) return 8;
-    if (location.startsWith('/admin/settings')) return 9;
+    if (location.startsWith('/admin/categories')) return 4;
+    if (location.startsWith('/admin/products')) return 5;
+    if (location.startsWith('/admin/transactions')) return 6;
+    if (location.startsWith('/admin/payouts')) return 7;
+    if (location.startsWith('/admin/coupons')) return 8;
+    if (location.startsWith('/admin/reviews')) return 9;
+    if (location.startsWith('/admin/settings')) return 10;
     return 0;
   }
 
@@ -237,9 +239,15 @@ class _AdminSidebar extends StatelessWidget {
             onTap: () => _navigate(context, '/admin/customers'),
           ),
           _NavItem(
+            icon: Icons.category_rounded,
+            label: 'Categories',
+            isSelected: selectedIndex == 4,
+            onTap: () => _navigate(context, '/admin/categories'),
+          ),
+          _NavItem(
             icon: Icons.inventory_2_rounded,
             label: 'Products',
-            isSelected: selectedIndex == 4,
+            isSelected: selectedIndex == 5,
             onTap: () => _navigate(context, '/admin/products'),
           ),
           const SizedBox(height: 8),
@@ -248,13 +256,13 @@ class _AdminSidebar extends StatelessWidget {
           _NavItem(
             icon: Icons.receipt_long_rounded,
             label: 'Transactions',
-            isSelected: selectedIndex == 5,
+            isSelected: selectedIndex == 6,
             onTap: () => _navigate(context, '/admin/transactions'),
           ),
           _NavItem(
             icon: Icons.account_balance_wallet_rounded,
             label: 'Payouts',
-            isSelected: selectedIndex == 6,
+            isSelected: selectedIndex == 7,
             onTap: () => _navigate(context, '/admin/payouts'),
           ),
           const SizedBox(height: 8),
@@ -263,13 +271,13 @@ class _AdminSidebar extends StatelessWidget {
           _NavItem(
             icon: Icons.local_offer_rounded,
             label: 'Coupons',
-            isSelected: selectedIndex == 7,
+            isSelected: selectedIndex == 8,
             onTap: () => _navigate(context, '/admin/coupons'),
           ),
           _NavItem(
             icon: Icons.reviews_rounded,
             label: 'Reviews',
-            isSelected: selectedIndex == 8,
+            isSelected: selectedIndex == 9,
             onTap: () => _navigate(context, '/admin/reviews'),
           ),
           const Spacer(),
@@ -277,7 +285,7 @@ class _AdminSidebar extends StatelessWidget {
           _NavItem(
             icon: Icons.settings_rounded,
             label: 'Settings',
-            isSelected: selectedIndex == 9,
+            isSelected: selectedIndex == 10,
             onTap: () => _navigate(context, '/admin/settings'),
           ),
           // Back to app

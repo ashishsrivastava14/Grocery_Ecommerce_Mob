@@ -82,7 +82,8 @@ class ApiService {
   Future<Response> put(String path, {dynamic data}) =>
       _dio.put(path, data: data);
 
-  Future<Response> delete(String path) => _dio.delete(path);
+  Future<Response> delete(String path, {Map<String, dynamic>? queryParams}) =>
+      _dio.delete(path, queryParameters: queryParams);
 
   Future<Response> uploadFile(String path, String filePath,
       {String fieldName = 'file'}) async {

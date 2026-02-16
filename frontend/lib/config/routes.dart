@@ -21,6 +21,7 @@ import '../screens/admin/admin_vendor_detail_screen.dart';
 import '../screens/admin/admin_orders_screen.dart';
 import '../screens/admin/admin_order_detail_screen.dart';
 import '../screens/admin/admin_customers_screen.dart';
+import '../screens/admin/admin_categories_screen.dart';
 import '../screens/admin/admin_products_screen.dart';
 import '../screens/admin/admin_transactions_screen.dart';
 import '../screens/admin/admin_coupons_screen.dart';
@@ -120,6 +121,12 @@ final appRouter = GoRouter(
           path: '/admin/customers',
           pageBuilder: (context, state) => const NoTransitionPage(
             child: AdminCustomersScreen(),
+          ),
+        ),
+        GoRoute(
+          path: '/admin/categories',
+          pageBuilder: (context, state) => const NoTransitionPage(
+            child: AdminCategoriesScreen(),
           ),
         ),
         GoRoute(

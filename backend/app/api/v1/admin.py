@@ -2,6 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, or_, desc, asc
+from sqlalchemy.orm import selectinload, joinedload
 from uuid import UUID
 from datetime import datetime, timedelta
 from typing import Optional
@@ -10,7 +11,7 @@ from app.database import get_db
 from app.api.deps import get_current_user
 from app.models.user import User, UserRole
 from app.models.vendor import Vendor, VendorStatus
-from app.models.product import Product, ProductCategory, ProductStatus
+from app.models.product import Product, ProductCategory, ProductStatus, ProductImage
 from app.models.order import Order, OrderStatus, OrderStatusHistory, PaymentStatus
 from app.models.payment import Payment, VendorPayout, PayoutStatus
 from app.models.promotion import Coupon, DiscountType
@@ -111,7 +112,12 @@ async def recent_orders(
     db: AsyncSession = Depends(get_db),
 ):
     _require_admin(current_user)
-    result = await db.execute(select(Order).order_by(Order.created_at.desc()).limit(limit))
+    result = await db.execute(
+        select(Order)
+        .options(joinedload(Order.customer), joinedload(Order.vendor), selectinload(Order.items))
+        .order_by(Order.created_at.desc())
+        .limit(limit)
+    )
     orders = result.scalars().all()
     return {"success": True, "data": [
         {"id": str(o.id), "order_number": o.order_number, "customer_id": str(o.customer_id),
@@ -183,7 +189,11 @@ async def list_all_vendors(
 async def get_vendor_detail(vendor_id: UUID, current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)):
     _require_admin(current_user)
-    result = await db.execute(select(Vendor).where(Vendor.id == vendor_id))
+    result = await db.execute(
+        select(Vendor)
+        .options(joinedload(Vendor.user), selectinload(Vendor.documents))
+        .where(Vendor.id == vendor_id)
+    )
     vendor = result.scalar_one_or_none()
     if not vendor: raise HTTPException(status_code=404, detail="Vendor not found")
     vendor_revenue = (await db.execute(select(func.sum(Order.total_amount)).where(
@@ -234,7 +244,11 @@ async def admin_list_orders(
     current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db),
 ):
     _require_admin(current_user)
-    query = select(Order)
+    query = select(Order).options(
+        joinedload(Order.customer),
+        joinedload(Order.vendor),
+        selectinload(Order.items)
+    )
     if status: query = query.where(Order.status == status)
     if payment_status: query = query.where(Order.payment_status == payment_status)
     if vendor_id: query = query.where(Order.vendor_id == vendor_id)
@@ -271,7 +285,16 @@ async def admin_list_orders(
 async def admin_get_order(order_id: UUID, current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)):
     _require_admin(current_user)
-    result = await db.execute(select(Order).where(Order.id == order_id))
+    result = await db.execute(
+        select(Order)
+        .options(
+            joinedload(Order.customer),
+            joinedload(Order.vendor),
+            selectinload(Order.items),
+            selectinload(Order.status_history)
+        )
+        .where(Order.id == order_id)
+    )
     order = result.scalar_one_or_none()
     if not order: raise HTTPException(status_code=404, detail="Order not found")
     return {"success": True, "data": {
@@ -374,7 +397,11 @@ async def admin_list_products(
     current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db),
 ):
     _require_admin(current_user)
-    query = select(Product)
+    query = select(Product).options(
+        joinedload(Product.vendor),
+        joinedload(Product.category),
+        selectinload(Product.images)
+    )
     if status: query = query.where(Product.status == status)
     if category_id: query = query.where(Product.category_id == category_id)
     if vendor_id: query = query.where(Product.vendor_id == vendor_id)
@@ -404,8 +431,12 @@ async def admin_list_products(
 async def admin_list_categories(current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)):
     _require_admin(current_user)
-    result = await db.execute(select(ProductCategory).where(
-        ProductCategory.parent_id == None).order_by(ProductCategory.sort_order))
+    result = await db.execute(
+        select(ProductCategory)
+        .options(selectinload(ProductCategory.children))
+        .where(ProductCategory.parent_id == None)
+        .order_by(ProductCategory.sort_order)
+    )
     categories = result.scalars().all()
     def to_dict(c):
         return {"id": str(c.id), "name": c.name, "slug": c.slug, "icon_url": c.icon_url,
@@ -425,7 +456,7 @@ async def admin_list_transactions(
     current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db),
 ):
     _require_admin(current_user)
-    query = select(Payment)
+    query = select(Payment).options(joinedload(Payment.order))
     if payment_method: query = query.where(Payment.payment_method == payment_method)
     if status: query = query.where(Payment.status == status)
     count_q = select(func.count()).select_from(query.subquery())
@@ -452,7 +483,7 @@ async def list_payouts(
     current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db),
 ):
     _require_admin(current_user)
-    query = select(VendorPayout)
+    query = select(VendorPayout).options(joinedload(VendorPayout.vendor))
     if status: query = query.where(VendorPayout.status == status)
     if vendor_id: query = query.where(VendorPayout.vendor_id == vendor_id)
     count_q = select(func.count()).select_from(query.subquery())
@@ -556,7 +587,7 @@ async def admin_list_reviews(
     current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db),
 ):
     _require_admin(current_user)
-    query = select(Review)
+    query = select(Review).options(joinedload(Review.user), joinedload(Review.product))
     if is_approved is not None: query = query.where(Review.is_approved == is_approved)
     count_q = select(func.count()).select_from(query.subquery())
     total = (await db.execute(count_q)).scalar() or 0
@@ -583,3 +614,362 @@ async def toggle_review_approval(review_id: UUID, current_user: User = Depends(g
     review.is_approved = not review.is_approved
     await db.flush()
     return {"success": True, "data": {"id": str(review.id), "is_approved": review.is_approved}}
+
+
+# ═══════════════════════════════════════════════════════════════
+# EXTENDED CRUD OPERATIONS
+# ═══════════════════════════════════════════════════════════════
+
+# ─── Vendor CRUD ──────────────────────────────────────────────
+
+@router.post("/vendors")
+async def create_vendor(
+    vendor_data: dict,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Create a new vendor with user account."""
+    _require_admin(current_user)
+    from app.core.security import get_password_hash
+    
+    # Create user account
+    user = User(
+        email=vendor_data["email"],
+        password_hash=get_password_hash(vendor_data["password"]),
+        full_name=vendor_data["owner_name"],
+        phone=vendor_data.get("phone"),
+        role=UserRole.VENDOR,
+        is_active=vendor_data.get("is_active", True),
+        is_verified=True,
+    )
+    db.add(user)
+    await db.flush()
+    
+    # Create vendor
+    vendor = Vendor(
+        user_id=user.id,
+        store_name=vendor_data["store_name"],
+        store_description=vendor_data.get("store_description"),
+        store_logo_url=vendor_data.get("store_logo_url"),
+        store_banner_url=vendor_data.get("store_banner_url"),
+        address=vendor_data["address"],
+        city=vendor_data["city"],
+        state=vendor_data["state"],
+        postal_code=vendor_data["postal_code"],
+        latitude=vendor_data.get("latitude"),
+        longitude=vendor_data.get("longitude"),
+        delivery_radius_km=vendor_data.get("delivery_radius_km", 10.0),
+        min_order_amount=vendor_data.get("min_order_amount", 0),
+        delivery_charge=vendor_data.get("delivery_charge", 0),
+        gstin=vendor_data.get("gstin"),
+        pan_number=vendor_data.get("pan_number"),
+        fssai_license=vendor_data.get("fssai_license"),
+        bank_account_number=vendor_data.get("bank_account_number"),
+        bank_ifsc=vendor_data.get("bank_ifsc"),
+        bank_name=vendor_data.get("bank_name"),
+        commission_percentage=vendor_data.get("commission_percentage", 10.0),
+        status=VendorStatus.APPROVED if vendor_data.get("auto_approve") else VendorStatus.PENDING,
+        is_active=vendor_data.get("is_active", True),
+    )
+    db.add(vendor)
+    await db.flush()
+    
+    return {"success": True, "data": {"id": str(vendor.id), "user_id": str(user.id), 
+            "store_name": vendor.store_name, "status": vendor.status.value}}
+
+
+@router.delete("/vendors/{vendor_id}")
+async def delete_vendor(
+    vendor_id: UUID,
+    hard_delete: bool = Query(False),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Delete or soft-delete a vendor."""
+    _require_admin(current_user)
+    result = await db.execute(select(Vendor).where(Vendor.id == vendor_id))
+    vendor = result.scalar_one_or_none()
+    if not vendor: raise HTTPException(status_code=404, detail="Vendor not found")
+    
+    if hard_delete:
+        await db.delete(vendor)
+    else:
+        vendor.is_active = False
+        vendor.status = VendorStatus.REJECTED
+    
+    await db.flush()
+    return {"success": True, "message": "Vendor deleted" if hard_delete else "Vendor deactivated"}
+
+
+# ─── Category CRUD ────────────────────────────────────────────
+
+@router.post("/categories")
+async def create_category(
+    category_data: dict,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Create a new product category."""
+    _require_admin(current_user)
+    
+    # Check if slug exists
+    existing = await db.execute(
+        select(ProductCategory).where(ProductCategory.slug == category_data["slug"])
+    )
+    if existing.scalar_one_or_none():
+        raise HTTPException(status_code=400, detail="Category slug already exists")
+    
+    category = ProductCategory(
+        name=category_data["name"],
+        slug=category_data["slug"],
+        description=category_data.get("description"),
+        icon_url=category_data.get("icon_url"),
+        image_url=category_data.get("image_url"),
+        parent_id=category_data.get("parent_id"),
+        sort_order=category_data.get("sort_order", 0),
+        is_active=category_data.get("is_active", True),
+    )
+    db.add(category)
+    await db.flush()
+    
+    return {"success": True, "data": {
+        "id": str(category.id), "name": category.name, "slug": category.slug,
+        "parent_id": str(category.parent_id) if category.parent_id else None,
+        "is_active": category.is_active,
+    }}
+
+
+@router.put("/categories/{category_id}")
+async def update_category(
+    category_id: UUID,
+    category_data: dict,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Update a product category."""
+    _require_admin(current_user)
+    result = await db.execute(select(ProductCategory).where(ProductCategory.id == category_id))
+    category = result.scalar_one_or_none()
+    if not category: raise HTTPException(status_code=404, detail="Category not found")
+    
+    for key, value in category_data.items():
+        if value is not None and hasattr(category, key):
+            setattr(category, key, value)
+    
+    await db.flush()
+    return {"success": True, "data": {
+        "id": str(category.id), "name": category.name, "slug": category.slug,
+        "is_active": category.is_active,
+    }}
+
+
+@router.delete("/categories/{category_id}")
+async def delete_category(
+    category_id: UUID,
+    move_products_to: Optional[UUID] = Query(None),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Delete a category, optionally moving products to another category."""
+    _require_admin(current_user)
+    result = await db.execute(select(ProductCategory).where(ProductCategory.id == category_id))
+    category = result.scalar_one_or_none()
+    if not category: raise HTTPException(status_code=404, detail="Category not found")
+    
+    # Check if category has products
+    products_count = (await db.execute(
+        select(func.count(Product.id)).where(Product.category_id == category_id)
+    )).scalar() or 0
+    
+    if products_count > 0:
+        if move_products_to:
+            # Move products to new category
+            await db.execute(
+                Product.__table__.update()
+                .where(Product.category_id == category_id)
+                .values(category_id=move_products_to)
+            )
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Category has {products_count} products. Provide move_products_to parameter."
+            )
+    
+    await db.delete(category)
+    await db.flush()
+    return {"success": True, "message": "Category deleted"}
+
+
+# ─── Product CRUD ─────────────────────────────────────────────
+
+@router.post("/products")
+async def create_product(
+    product_data: dict,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Create a new product."""
+    _require_admin(current_user)
+    
+    product = Product(
+        vendor_id=product_data["vendor_id"],
+        category_id=product_data["category_id"],
+        name=product_data["name"],
+        description=product_data.get("description"),
+        short_description=product_data.get("short_description"),
+        sku=product_data.get("sku"),
+        barcode=product_data.get("barcode"),
+        brand=product_data.get("brand"),
+        price=product_data["price"],
+        compare_at_price=product_data.get("compare_at_price"),
+        cost_price=product_data.get("cost_price"),
+        stock_quantity=product_data.get("stock_quantity", 0),
+        low_stock_threshold=product_data.get("low_stock_threshold", 10),
+        unit_type=product_data.get("unit_type", "piece"),
+        unit_value=product_data.get("unit_value", 1),
+        weight_grams=product_data.get("weight_grams"),
+        is_featured=product_data.get("is_featured", False),
+        is_perishable=product_data.get("is_perishable", False),
+        status=ProductStatus.ACTIVE if product_data.get("status") == "active" else ProductStatus.DRAFT,
+    )
+    db.add(product)
+    await db.flush()
+    
+    return {"success": True, "data": {
+        "id": str(product.id), "name": product.name, "sku": product.sku,
+        "price": float(product.price), "status": product.status.value,
+    }}
+
+
+@router.put("/products/{product_id}")
+async def update_product(
+    product_id: UUID,
+    product_data: dict,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Update a product."""
+    _require_admin(current_user)
+    result = await db.execute(select(Product).where(Product.id == product_id))
+    product = result.scalar_one_or_none()
+    if not product: raise HTTPException(status_code=404, detail="Product not found")
+    
+    for key, value in product_data.items():
+        if value is not None and hasattr(product, key):
+            if key == "status" and isinstance(value, str):
+                setattr(product, key, ProductStatus(value))
+            else:
+                setattr(product, key, value)
+    
+    await db.flush()
+    return {"success": True, "data": {
+        "id": str(product.id), "name": product.name, "price": float(product.price),
+        "status": product.status.value,
+    }}
+
+
+@router.delete("/products/{product_id}")
+async def delete_product(
+    product_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Delete a product."""
+    _require_admin(current_user)
+    result = await db.execute(select(Product).where(Product.id == product_id))
+    product = result.scalar_one_or_none()
+    if not product: raise HTTPException(status_code=404, detail="Product not found")
+    
+    await db.delete(product)
+    await db.flush()
+    return {"success": True, "message": "Product deleted"}
+
+
+# ─── Customer CRUD ────────────────────────────────────────────
+
+@router.post("/customers")
+async def create_customer(
+    customer_data: dict,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Create a new customer account."""
+    _require_admin(current_user)
+    from app.core.security import get_password_hash
+    
+    # Check if email exists
+    existing = await db.execute(select(User).where(User.email == customer_data["email"]))
+    if existing.scalar_one_or_none():
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    user = User(
+        email=customer_data["email"],
+        password_hash=get_password_hash(customer_data.get("password", "Password123!")),
+        full_name=customer_data["full_name"],
+        phone=customer_data.get("phone"),
+        role=UserRole.CUSTOMER,
+        is_active=customer_data.get("is_active", True),
+        is_verified=True,
+    )
+    db.add(user)
+    await db.flush()
+    
+    return {"success": True, "data": {
+        "id": str(user.id), "email": user.email, "full_name": user.full_name,
+        "is_active": user.is_active,
+    }}
+
+
+@router.put("/customers/{user_id}")
+async def update_customer(
+    user_id: UUID,
+    customer_data: dict,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Update a customer account."""
+    _require_admin(current_user)
+    result = await db.execute(select(User).where(User.id == user_id, User.role == UserRole.CUSTOMER))
+    user = result.scalar_one_or_none()
+    if not user: raise HTTPException(status_code=404, detail="Customer not found")
+    
+    for key, value in customer_data.items():
+        if value is not None and hasattr(user, key) and key not in ["id", "password_hash", "created_at"]:
+            setattr(user, key, value)
+    
+    if "password" in customer_data and customer_data["password"]:
+        from app.core.security import get_password_hash
+        user.password_hash = get_password_hash(customer_data["password"])
+    
+    await db.flush()
+    return {"success": True, "data": {
+        "id": str(user.id), "email": user.email, "full_name": user.full_name,
+        "is_active": user.is_active,
+    }}
+
+
+@router.delete("/customers/{user_id}")
+async def delete_customer(
+    user_id: UUID,
+    anonymize: bool = Query(False),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Delete or anonymize a customer account."""
+    _require_admin(current_user)
+    result = await db.execute(select(User).where(User.id == user_id, User.role == UserRole.CUSTOMER))
+    user = result.scalar_one_or_none()
+    if not user: raise HTTPException(status_code=404, detail="Customer not found")
+    
+    if anonymize:
+        # GDPR-compliant anonymization
+        user.email = f"deleted_{user.id}@deleted.com"
+        user.full_name = "Deleted User"
+        user.phone = None
+        user.is_active = False
+        await db.flush()
+        return {"success": True, "message": "Customer data anonymized"}
+    else:
+        await db.delete(user)
+        await db.flush()
+        return {"success": True, "message": "Customer deleted"}
