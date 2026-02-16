@@ -34,7 +34,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             _emailController.text.trim(),
             _passwordController.text,
           );
-      if (mounted) context.go('/home');
+      if (mounted) {
+        final user = ref.read(authStateProvider).valueOrNull;
+        if (user?.role == 'admin') {
+          context.go('/admin');
+        } else {
+          context.go('/home');
+        }
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

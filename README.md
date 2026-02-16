@@ -235,6 +235,14 @@ flutter build web
 
 ### Core Tables
 - **users** — Customers, vendors, admins with role-based access
+Customers user = shubhamj@quickprepai.com
+Password = 12345678
+
+vendors user = ashishg@quickprepai.com
+Password = 12345678
+
+admins user= ashishs@quickprepai.com
+Password = test1234
 - **addresses** — Multiple delivery addresses per user
 - **vendors** — Store info, KYC, bank details, commission rates
 - **vendor_documents** — KYC document uploads
