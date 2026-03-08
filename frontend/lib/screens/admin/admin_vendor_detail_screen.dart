@@ -285,7 +285,7 @@ class _VendorDetail extends ConsumerWidget {
                   padding: const EdgeInsets.only(bottom: 12),
                   child: Row(
                     children: [
-                      Icon(Icons.description_rounded,
+                      const Icon(Icons.description_rounded,
                           color: AppColors.info, size: 20),
                       const SizedBox(width: 12),
                       Expanded(

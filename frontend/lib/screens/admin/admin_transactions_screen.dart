@@ -36,7 +36,7 @@ class _AdminTransactionsScreenState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AdminPageHeader(
+          const AdminPageHeader(
             title: 'Transactions',
             subtitle: 'All payment transactions across the platform',
           ),

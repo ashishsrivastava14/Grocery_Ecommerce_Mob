@@ -1,13 +1,18 @@
 """Comprehensive Admin panel endpoints."""
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, or_, desc, asc
 from sqlalchemy.orm import selectinload, joinedload
 from uuid import UUID
 from datetime import datetime, timedelta
 from typing import Optional
+import os
+import uuid
 
 from app.database import get_db
+from app.config import get_settings
+
+settings = get_settings()
 from app.api.deps import get_current_user
 from app.models.user import User, UserRole
 from app.models.vendor import Vendor, VendorStatus
@@ -973,3 +978,40 @@ async def delete_customer(
         await db.delete(user)
         await db.flush()
         return {"success": True, "message": "Customer deleted"}
+
+
+# ═══════════════════════════════════════════════════════════════
+# FILE UPLOAD
+# ═══════════════════════════════════════════════════════════════
+
+@router.post("/upload")
+async def upload_file(
+    file: UploadFile = File(...),
+    folder: str = Query("general", description="Subfolder: categories, products, vendors, etc."),
+    current_user: User = Depends(get_current_user),
+):
+    """Upload image file and return URL."""
+    _require_admin(current_user)
+    
+    # Validate file type
+    allowed_types = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"]
+    if file.content_type not in allowed_types:
+        raise HTTPException(status_code=400, detail="Only image files are allowed")
+    
+    # Generate unique filename
+    ext = file.filename.split(".")[-1] if "." in file.filename else "jpg"
+    filename = f"{uuid.uuid4()}.{ext}"
+    
+    # Create folder path
+    folder_path = os.path.join(settings.UPLOAD_DIR, folder)
+    os.makedirs(folder_path, exist_ok=True)
+    
+    # Save file
+    file_path = os.path.join(folder_path, filename)
+    with open(file_path, "wb") as f:
+        content = await file.read()
+        f.write(content)
+    
+    # Return URL (relative to backend)
+    file_url = f"/uploads/{folder}/{filename}"
+    return {"success": True, "data": {"url": file_url, "filename": filename}}

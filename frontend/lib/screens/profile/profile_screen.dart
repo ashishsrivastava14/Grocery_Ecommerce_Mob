@@ -69,7 +69,7 @@ class ProfileScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    isGuest ? 'Sign in for the full experience' : (user?.email ?? ''),
+                    isGuest ? 'Sign in for the full experience' : (user.email ?? ''),
                     style: const TextStyle(
                       fontSize: 14,
                       color: AppColors.textSecondary,

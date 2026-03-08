@@ -33,7 +33,7 @@ class _AdminVendorsScreenState extends ConsumerState<AdminVendorsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AdminPageHeader(
+          const AdminPageHeader(
             title: 'Vendor Management',
             subtitle: 'Manage vendor applications & accounts',
           ),

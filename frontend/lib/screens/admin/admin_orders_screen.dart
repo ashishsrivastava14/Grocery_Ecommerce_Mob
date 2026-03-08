@@ -33,7 +33,7 @@ class _AdminOrdersScreenState extends ConsumerState<AdminOrdersScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AdminPageHeader(
+          const AdminPageHeader(
             title: 'Order Management',
             subtitle: 'Monitor and manage all orders',
           ),

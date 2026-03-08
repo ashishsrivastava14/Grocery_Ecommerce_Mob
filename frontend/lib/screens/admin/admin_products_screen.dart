@@ -33,7 +33,7 @@ class _AdminProductsScreenState extends ConsumerState<AdminProductsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AdminPageHeader(
+          const AdminPageHeader(
             title: 'Product Management',
             subtitle: 'Monitor all products across vendors',
           ),
@@ -62,7 +62,7 @@ class _AdminProductsScreenState extends ConsumerState<AdminProductsScreen> {
                         size: 16,
                         color: lowStock ? Colors.white : AppColors.error),
                     const SizedBox(width: 4),
-                    Text('Low Stock'),
+                    const Text('Low Stock'),
                   ],
                 ),
                 selected: lowStock,
@@ -233,9 +233,9 @@ class _AdminProductsScreenState extends ConsumerState<AdminProductsScreen> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 if (isLow)
-                                  Padding(
+                                  const Padding(
                                     padding:
-                                        const EdgeInsets.only(right: 4),
+                                        EdgeInsets.only(right: 4),
                                     child: Icon(
                                         Icons.warning_amber_rounded,
                                         size: 14,

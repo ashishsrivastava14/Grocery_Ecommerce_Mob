@@ -1,7 +1,15 @@
 import 'api_service.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AdminService {
   final _api = ApiService();
+
+  // ─── File Upload ──────────────────────────────────────────
+  Future<String> uploadFile(XFile file, {String folder = 'general'}) async {
+    final res = await _api.uploadFile('/admin/upload', file,
+        queryParams: {'folder': folder});
+    return res.data['data']['url'];
+  }
 
   // ─── Dashboard ────────────────────────────────────────────
   Future<Map<String, dynamic>> getDashboard() async {

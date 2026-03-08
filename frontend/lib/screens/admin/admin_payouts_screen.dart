@@ -21,7 +21,7 @@ class AdminPayoutsScreen extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AdminPageHeader(
+          const AdminPageHeader(
             title: 'Vendor Payouts',
             subtitle: 'Track and manage vendor payout settlements',
           ),

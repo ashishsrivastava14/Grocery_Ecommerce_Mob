@@ -136,7 +136,24 @@ docker-compose exec backend alembic upgrade head
 # Frontend:     http://localhost (after Flutter web build)
 ```
 
-### Local Backend Development
+### Start local backend option -1 
+
+# Open a terminal in backend and activate the same environment you use to run Uvicorn.
+   cd D:\Projects\InHouseWebsites\MobileApp\GroceryeCommerce\backend
+   .\.venv\Scripts\activate
+
+# Install the missing driver.
+   pip install asyncpg
+
+# Persist it in dependencies so it does not break again.
+   pip freeze > requirements.txt
+
+# Persist it in dependencies so it does not break again.
+      pip freeze > requirements.txt 
+
+   uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+### Local Backend Development option -2
 
 ```bash
 cd backend

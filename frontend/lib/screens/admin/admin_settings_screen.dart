@@ -28,7 +28,7 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AdminPageHeader(
+          const AdminPageHeader(
             title: 'Platform Settings',
             subtitle: 'Configure platform-wide settings and preferences',
           ),
@@ -261,7 +261,7 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
         Switch(
           value: value,
           onChanged: onChanged,
-          activeColor: activeColor ?? AppColors.primary,
+          activeThumbColor: activeColor ?? AppColors.primary,
         ),
       ],
     );

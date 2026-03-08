@@ -45,7 +45,7 @@ class _DashboardContent extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AdminPageHeader(
+            const AdminPageHeader(
               title: 'Dashboard',
               subtitle: 'Welcome back! Here\'s your platform overview.',
             ),
@@ -220,7 +220,7 @@ class _RevenueChartSectionState extends ConsumerState<_RevenueChartSection> {
         loading: () => const SizedBox(
             height: 250,
             child: Center(child: CircularProgressIndicator())),
-        error: (e, _) => SizedBox(
+        error: (e, _) => const SizedBox(
             height: 250,
             child: Center(child: Text('Failed to load chart'))),
         data: (chartData) => SizedBox(

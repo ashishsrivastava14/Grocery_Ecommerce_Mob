@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../config/theme.dart';
+import '../../config/constants.dart';
 import '../../providers/admin_provider.dart';
 import 'widgets/admin_common.dart';
 import 'widgets/admin_status_badge.dart';
@@ -97,13 +99,18 @@ class _AdminCategoriesScreenState extends ConsumerState<AdminCategoriesScreen> {
     final nameCtrl = TextEditingController(text: category?['name'] ?? '');
     final slugCtrl = TextEditingController(text: category?['slug'] ?? '');
     final descCtrl = TextEditingController(text: category?['description'] ?? '');
-    final iconUrlCtrl = TextEditingController(text: category?['icon_url'] ?? '');
-    final imageUrlCtrl = TextEditingController(text: category?['image_url'] ?? '');
     final sortOrderCtrl = TextEditingController(
         text: (category?['sort_order'] ?? 0).toString());
     String? parentId = category?['parent_id'];
     bool isActive = category?['is_active'] ?? true;
     bool isSaving = false;
+    
+    // Image states
+    String? iconUrl = category?['icon_url'];
+    String? imageUrl = category?['image_url'];
+    XFile? iconFile;
+    XFile? imageFile;
+    final imagePicker = ImagePicker();
 
     showDialog(
       context: context,
@@ -155,12 +162,12 @@ class _AdminCategoriesScreenState extends ConsumerState<AdminCategoriesScreen> {
                         final categories = snapshot.data ?? [];
                         final filteredCats = isEdit
                             ? categories
-                                .where((c) => c['id'] != category!['id'])
+                                .where((c) => c['id'] != category['id'])
                                 .toList()
                             : categories;
 
                         return DropdownButtonFormField<String>(
-                          value: parentId,
+                          initialValue: parentId,
                           decoration: const InputDecoration(
                             labelText: 'Parent Category',
                             prefixIcon: Icon(Icons.account_tree),
@@ -189,20 +196,112 @@ class _AdminCategoriesScreenState extends ConsumerState<AdminCategoriesScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    TextFormField(
-                      controller: iconUrlCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'Icon URL',
-                        prefixIcon: Icon(Icons.image),
-                      ),
+                    
+                    // Icon Image Picker
+                    const Text('Category Icon', 
+                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        if (iconFile != null || iconUrl != null)
+                          Container(
+                            width: 60,
+                            height: 60,
+                            margin: const EdgeInsets.only(right: 12),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey.shade300),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: iconFile != null
+                                ? Image.network(iconFile!.path, fit: BoxFit.cover)
+                                : Image.network(
+                                    iconUrl!.startsWith('http')
+                                        ? iconUrl!
+                                        : '${AppConstants.baseUrl}$iconUrl',
+                                    fit: BoxFit.cover
+                                  ),
+                          ),
+                        OutlinedButton.icon(
+                          onPressed: () async {
+                            final picked = await imagePicker.pickImage(
+                              source: ImageSource.gallery,
+                              maxWidth: 512,
+                              maxHeight: 512,
+                            );
+                            if (picked != null) {
+                              setDialogState(() {
+                                iconFile = picked;
+                              });
+                            }
+                          },
+                          icon: const Icon(Icons.upload_file, size: 18),
+                          label: Text(iconFile != null || iconUrl != null 
+                              ? 'Change Icon' : 'Upload Icon'),
+                        ),
+                        if (iconFile != null || iconUrl != null)
+                          IconButton(
+                            icon: const Icon(Icons.delete_outline, size: 20),
+                            onPressed: () => setDialogState(() {
+                              iconFile = null;
+                              iconUrl = null;
+                            }),
+                            tooltip: 'Remove',
+                          ),
+                      ],
                     ),
                     const SizedBox(height: 16),
-                    TextFormField(
-                      controller: imageUrlCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'Banner Image URL',
-                        prefixIcon: Icon(Icons.photo),
-                      ),
+                    
+                    // Banner Image Picker
+                    const Text('Banner Image', 
+                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        if (imageFile != null || imageUrl != null)
+                          Container(
+                            width: 100,
+                            height: 60,
+                            margin: const EdgeInsets.only(right: 12),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey.shade300),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: imageFile != null
+                                ? Image.network(imageFile!.path, fit: BoxFit.cover)
+                                : Image.network(
+                                    imageUrl!.startsWith('http')
+                                        ? imageUrl!
+                                        : '${AppConstants.baseUrl}$imageUrl',
+                                    fit: BoxFit.cover
+                                  ),
+                          ),
+                        OutlinedButton.icon(
+                          onPressed: () async {
+                            final picked = await imagePicker.pickImage(
+                              source: ImageSource.gallery,
+                              maxWidth: 1200,
+                              maxHeight: 600,
+                            );
+                            if (picked != null) {
+                              setDialogState(() {
+                                imageFile = picked;
+                              });
+                            }
+                          },
+                          icon: const Icon(Icons.upload_file, size: 18),
+                          label: Text(imageFile != null || imageUrl != null 
+                              ? 'Change Banner' : 'Upload Banner'),
+                        ),
+                        if (imageFile != null || imageUrl != null)
+                          IconButton(
+                            icon: const Icon(Icons.delete_outline, size: 20),
+                            onPressed: () => setDialogState(() {
+                              imageFile = null;
+                              imageUrl = null;
+                            }),
+                            tooltip: 'Remove',
+                          ),
+                      ],
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
@@ -236,19 +335,37 @@ class _AdminCategoriesScreenState extends ConsumerState<AdminCategoriesScreen> {
                       if (!formKey.currentState!.validate()) return;
                       setDialogState(() => isSaving = true);
                       try {
+                        // Upload images if selected
+                        String? uploadedIconUrl = iconUrl;
+                        String? uploadedImageUrl = imageUrl;
+                        
+                        if (iconFile != null) {
+                          uploadedIconUrl = await service.uploadFile(
+                            iconFile!,
+                            folder: 'categories'
+                          );
+                        }
+                        
+                        if (imageFile != null) {
+                          uploadedImageUrl = await service.uploadFile(
+                            imageFile!,
+                            folder: 'categories'
+                          );
+                        }
+                        
                         final data = {
                           'name': nameCtrl.text.trim(),
                           'slug': slugCtrl.text.trim(),
                           'description': descCtrl.text.trim(),
-                          'icon_url': iconUrlCtrl.text.trim(),
-                          'image_url': imageUrlCtrl.text.trim(),
+                          'icon_url': uploadedIconUrl ?? '',
+                          'image_url': uploadedImageUrl ?? '',
                           'parent_id': parentId,
                           'sort_order': int.tryParse(sortOrderCtrl.text) ?? 0,
                           'is_active': isActive,
                         };
 
                         if (isEdit) {
-                          await service.updateCategory(category!['id'], data);
+                          await service.updateCategory(category['id'], data);
                         } else {
                           await service.createCategory(data);
                         }
@@ -417,14 +534,18 @@ class _CategoryTile extends StatelessWidget {
       children: [
         ListTile(
           contentPadding: EdgeInsets.only(left: 16.0 + (level * 40.0), right: 16),
-          leading: category['icon_url'] != null
+          leading: category['icon_url'] != null && category['icon_url'].toString().isNotEmpty
               ? CircleAvatar(
                   backgroundColor: AppColors.primary.withAlpha(25),
-                  backgroundImage: NetworkImage(category['icon_url']),
+                  backgroundImage: NetworkImage(
+                    category['icon_url'].toString().startsWith('http')
+                        ? category['icon_url']
+                        : '${AppConstants.baseUrl}${category['icon_url']}'
+                  ),
                 )
               : CircleAvatar(
                   backgroundColor: AppColors.primary.withAlpha(25),
-                  child: Icon(Icons.category, color: AppColors.primary, size: 20),
+                  child: const Icon(Icons.category, color: AppColors.primary, size: 20),
                 ),
           title: Row(
             children: [
@@ -458,7 +579,7 @@ class _CategoryTile extends StatelessWidget {
               Switch(
                 value: category['is_active'] == true,
                 onChanged: (_) => onToggle(category),
-                activeColor: AppColors.success,
+                activeThumbColor: AppColors.success,
               ),
               IconButton(
                 icon: const Icon(Icons.edit_outlined, size: 18),

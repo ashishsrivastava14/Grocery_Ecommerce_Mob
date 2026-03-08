@@ -32,7 +32,7 @@ class _AdminCustomersScreenState extends ConsumerState<AdminCustomersScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AdminPageHeader(
+          const AdminPageHeader(
             title: 'Customer Management',
             subtitle: 'View and manage customer accounts',
           ),
@@ -185,7 +185,7 @@ class _AdminCustomersScreenState extends ConsumerState<AdminCustomersScreen> {
                             DataCell(
                               Switch(
                                 value: isActive,
-                                activeColor: AppColors.success,
+                                activeThumbColor: AppColors.success,
                                 onChanged: (_) =>
                                     _toggleActive(c['id'], ref),
                               ),

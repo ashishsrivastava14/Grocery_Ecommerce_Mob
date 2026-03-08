@@ -213,7 +213,7 @@ class _AdminSidebar extends StatelessWidget {
           ),
           const SizedBox(height: 28),
           // Section: MAIN
-          _SectionLabel(label: 'MAIN'),
+          const _SectionLabel(label: 'MAIN'),
           _NavItem(
             icon: Icons.dashboard_rounded,
             label: 'Dashboard',
@@ -252,7 +252,7 @@ class _AdminSidebar extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           // Section: FINANCE
-          _SectionLabel(label: 'FINANCE'),
+          const _SectionLabel(label: 'FINANCE'),
           _NavItem(
             icon: Icons.receipt_long_rounded,
             label: 'Transactions',
@@ -267,7 +267,7 @@ class _AdminSidebar extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           // Section: ENGAGEMENT
-          _SectionLabel(label: 'ENGAGEMENT'),
+          const _SectionLabel(label: 'ENGAGEMENT'),
           _NavItem(
             icon: Icons.local_offer_rounded,
             label: 'Coupons',

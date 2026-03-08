@@ -25,7 +25,7 @@ class _AdminReviewsScreenState extends ConsumerState<AdminReviewsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AdminPageHeader(
+          const AdminPageHeader(
             title: 'Review Moderation',
             subtitle: 'Monitor and moderate customer reviews',
           ),
@@ -193,7 +193,7 @@ class _ReviewCard extends StatelessWidget {
               Switch(
                 value: isApproved,
                 onChanged: (_) => onToggleApproval(),
-                activeColor: AppColors.success,
+                activeThumbColor: AppColors.success,
               ),
             ],
           ),

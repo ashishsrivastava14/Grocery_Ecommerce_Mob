@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import '../config/constants.dart';
 
 class ApiService {
@@ -85,11 +86,12 @@ class ApiService {
   Future<Response> delete(String path, {Map<String, dynamic>? queryParams}) =>
       _dio.delete(path, queryParameters: queryParams);
 
-  Future<Response> uploadFile(String path, String filePath,
-      {String fieldName = 'file'}) async {
+  Future<Response> uploadFile(String path, XFile file,
+      {String fieldName = 'file', Map<String, dynamic>? queryParams}) async {
+    final bytes = await file.readAsBytes();
     final formData = FormData.fromMap({
-      fieldName: await MultipartFile.fromFile(filePath),
+      fieldName: MultipartFile.fromBytes(bytes, filename: file.name),
     });
-    return _dio.post(path, data: formData);
+    return _dio.post(path, data: formData, queryParameters: queryParams);
   }
 }

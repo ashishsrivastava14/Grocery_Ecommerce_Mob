@@ -27,7 +27,7 @@ class _AdminCouponsScreenState extends ConsumerState<AdminCouponsScreen> {
         children: [
           Row(
             children: [
-              Expanded(
+              const Expanded(
                 child: AdminPageHeader(
                   title: 'Coupon Management',
                   subtitle: 'Create and manage discount coupons',
@@ -122,7 +122,7 @@ class _AdminCouponsScreenState extends ConsumerState<AdminCouponsScreen> {
                                 style: const TextStyle(fontSize: 13))),
                             DataCell(Text(
                                 discType == 'percentage'
-                                    ? '${discVal}%'
+                                    ? '$discVal%'
                                     : '₹$discVal',
                                 style: const TextStyle(
                                     fontWeight: FontWeight.w600,
@@ -139,7 +139,7 @@ class _AdminCouponsScreenState extends ConsumerState<AdminCouponsScreen> {
                             DataCell(Switch(
                               value: isActive,
                               onChanged: (_) => _toggleCoupon(c),
-                              activeColor: AppColors.success,
+                              activeThumbColor: AppColors.success,
                             )),
                             DataCell(IconButton(
                               icon: const Icon(Icons.delete_outline_rounded,
@@ -272,7 +272,7 @@ class _AdminCouponsScreenState extends ConsumerState<AdminCouponsScreen> {
                     ),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
-                      value: discountType,
+                      initialValue: discountType,
                       decoration: const InputDecoration(
                         labelText: 'Discount Type',
                         prefixIcon: Icon(Icons.percent),
@@ -301,8 +301,9 @@ class _AdminCouponsScreenState extends ConsumerState<AdminCouponsScreen> {
                             validator: (v) {
                               final n = double.tryParse(v ?? '');
                               if (n == null || n <= 0) return 'Invalid';
-                              if (discountType == 'percentage' && n > 100)
+                              if (discountType == 'percentage' && n > 100) {
                                 return 'Max 100%';
+                              }
                               return null;
                             },
                           ),
